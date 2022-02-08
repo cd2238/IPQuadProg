@@ -152,7 +152,11 @@ endif
 
 rxs1 = lambda*deltay+y*deltalambda
 if (sum(abs(rxs1+rxs)).GT. prec) THEN
+#ifdef DEBUG
+  print*, "rxs=", (rxs(i), i=1,m)
+  print*, "rxs1=", (rxs1(i), i=1,m)
   print*, "prob 3:", sum(abs(rxs1+rxs))
+#endif
   info = -19
 endif
 
