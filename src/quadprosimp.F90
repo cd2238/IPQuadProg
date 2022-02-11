@@ -1,6 +1,6 @@
 
 !-----------------------------------------------------------------------*/
-subroutine quadprosimp(n, G, c, m, A, b, isx0, x0, itermax, x, y, lambda, iter, info)
+subroutine quadprosimp(n, G, c, m, A, b, isx0, x0, itermax, mutol, x, y, lambda, iter, info)
 
 implicit none
 ! inputs
@@ -13,6 +13,8 @@ double precision, dimension(m),   intent(in)  :: b
 integer,                          intent(in)  :: isx0
 double precision, dimension(n),   intent(in)  :: x0
 integer,                          intent(in)  :: itermax
+double precision,                 intent(in)  :: mutol
+
 
 ! outputs
 double precision, dimension(n),   intent(out) :: x
@@ -24,10 +26,9 @@ integer,                          intent(out) :: info
 
 ! locall variables
 double precision alpha_aff, alpha_aff1, alpha_aff2, alpha, alpha1, alpha2, sigma
-double precision ps, epsimu, mu_aff, tau, mu
+double precision ps, mu_aff, tau, mu
 integer i
 
-PARAMETER(epsimu=1.0d-10)
 EXTERNAL initqp, solvesysqp, calcalpha
 
 
@@ -82,7 +83,7 @@ mu = ps/dble(m)
 
 ! algorithm
 iter = 0
-do while ((mu > epsimu).AND.(iter < itermax))
+do while ((mu > mutol).AND.(iter < itermax))
     iter = iter + 1
 
     !rd
