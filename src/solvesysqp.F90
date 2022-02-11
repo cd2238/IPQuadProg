@@ -23,7 +23,7 @@ integer,                          intent(out) :: info
 
 ! local variables
 integer i, j, nrhs, mn
-double precision prec
+double precision prec, cho
 external dpotrs
 
 ! allocatable variables
@@ -37,7 +37,7 @@ double precision, dimension(:),   allocatable :: rd1
 double precision, dimension(:),   allocatable :: rp1
 double precision, dimension(:),   allocatable :: rxs1
 
-parameter(prec=1.0d-9)
+parameter(prec = 1.0d-9, cho = 0)
 
 ! init
 info = 0
@@ -92,9 +92,17 @@ print*, "termb=[",  (deltax(i),i=1,n), "]'"
 #endif
 
 ! Solve (G+A'Y^-1 ΛA)deltax = -rd+A'Y^{-1}Λ[-rp-y+sigma mu Λ^{-1}e]
-nrhs= 1
-call dpotrf('U', n, T1, n, info) ! chol factorization
-
+! cholesky factorization
+if (cho == 0) then
+  !  lapack cholesky
+  call dpotrf('L', n, T1, n, info)
+else ! cho==1
+  ! modified cholesky
+  call modchol2( m, T1, T1, info )
+endif
+if (info .NE. 0) then
+  return
+endif
 #ifdef DEBUG
 print*, "chol=", ((T1(i,j), j=1,n), char(10), i=1,n)
 #endif
@@ -105,6 +113,7 @@ if (info .NE. 0) THEN
 #endif
   return
 endif
+nrhs = 1
 call dpotrs('U', n, nrhs, T1, n, deltax, n, info) ! dpotrs
 if (info .NE. 0) THEN
 #ifdef DEBUG
