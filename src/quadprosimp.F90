@@ -29,9 +29,8 @@ integer,                          intent(out) :: info
 ! locall variables
 double precision alpha_aff, alpha_aff1, alpha_aff2, alpha, alpha1, alpha2, sigma
 double precision ps, mu_aff, tau, mu
-integer i
 #ifdef DEBUG
-integer j
+integer i,j
 #endif
 
 EXTERNAL initqp, solvesysqp, calcalpha
