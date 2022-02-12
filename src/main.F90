@@ -20,7 +20,7 @@ program main
 
      double precision, dimension(:), allocatable    :: x    
      double precision, dimension(:), allocatable    :: lambda   
-     double precision, dimension(:), allocatable    :: s
+     double precision, dimension(:), allocatable    :: y
      integer                                        :: iter
      integer                                        :: info
 
@@ -29,7 +29,6 @@ program main
      ! read data
      num_args = command_argument_count()
      allocate(args(num_args))  ! 
-
      if (num_args >= 1) then
          call get_command_argument(1,args(1))
          print*, "dataset=", args(1)
@@ -77,7 +76,7 @@ program main
      if (allocock /= 0) return 
      allocate (lambda(nb_inequality_constraint), stat = allocock)
      if (allocock /= 0) return 
-     allocate (s(nb_control_variables), stat = allocock)
+     allocate (y(nb_inequality_constraint), stat = allocock)
      if (allocock /= 0) return    
      
      allocate(x0(nb_control_variables))
@@ -89,14 +88,14 @@ program main
                        nb_inequality_constraint, constraint_matrix, constraint_vector, &
                        isx0, x0, &
                        itermax, mutol, &
-                       x, lambda, s, iter, info )
+                       x, y, lambda, iter, info )
 
      
 #ifdef DEBUG
      ! write results
      print*, (x(i), i=1, nb_control_variables)
      print*, (lambda(i), i=1, nb_inequality_constraint)     
-     print*, (s(i), i=1, nb_control_variables)     
+     print*, (y(i), i=1, nb_inequality_constraint)
 #endif
 
      print*, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -112,7 +111,9 @@ program main
 
 
      deallocate(x)
-     deallocate(s)
+     deallocate(y)
+     deallocate(x0)
+     deallocate(quadratic_objective)
      deallocate(lambda)
      deallocate(args)
      deallocate(linear_objective)
