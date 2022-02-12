@@ -28,9 +28,9 @@ external dpotrs
 
 ! allocatable variables
 double precision, dimension(:),   allocatable :: Adeltax
-double precision, dimension(:,:), allocatable :: AD2
+double precision, dimension(:,:), allocatable :: D2A
 double precision, dimension(:,:), allocatable :: AD2A
-double precision, dimension(:),   allocatable :: xsl
+double precision, dimension(:),   allocatable :: lsy
 double precision, dimension(:),   allocatable :: cro
 double precision, dimension(:,:), allocatable :: T1
 double precision, dimension(:),   allocatable :: rd1
@@ -45,9 +45,9 @@ mn = max(m,n)
 
 ! allocations
 allocate(Adeltax(m))
-allocate(AD2(m,n))
+allocate(D2A(m,n))
 allocate(AD2A(n,n))
-allocate(xsl(m))
+allocate(lsy(m))
 allocate(cro(m))
 allocate(T1(n,n))
 allocate(rd1(n))
@@ -68,16 +68,16 @@ print*, "rxs=[", (rxs(i),i=1,m), "]'"
 #endif
 
 ! calculates (G+A'Y^-1 ΛA)
-xsl = lambda / y   ! y^-1 lambda
-do j=1,n
-  AD2(:,j) = A(:,j)*xsl(j)
+lsy = lambda / y   ! y^-1 lambda
+do i=1,m
+  D2A(i,:) = A(i,:)*lsy(i)
 enddo
-AD2A = matmul(transpose(A), AD2)
+AD2A = matmul(transpose(A), D2A)
 T1 = G + AD2A
 
 #ifdef DEBUG
-print*, "xsl=", (xsl(i), i=1,m)
-print*, "AD2=[[", ((AD2(i, j),j=1,n),char(10), i=1,m), "]]"
+print*, "lsy=", (lsy(i), i=1,m)
+print*, "AD2=[[", ((D2A(i, j),j=1,n),char(10), i=1,m), "]]"
 print*, "AD2A=[[", ((AD2A(i,j),j=1,n),char(10), i=1,n), "]]"
 print*, "T1=[",  ((T1(i,j),j=1,n),char(10), i=1,n), "]'"
 #endif
@@ -85,7 +85,7 @@ print*, "T1=[",  ((T1(i,j),j=1,n),char(10), i=1,n), "]'"
 
 ! calculates deltax(val provisoire) = -rd+A'Y^{-1}Λ[-rp-rxs Λ^{-1}] =  -rd+A2'[-rp-rxs Λ^{-1}]
 cro = -rp - rxs/lambda
-deltax = matmul(transpose(AD2), cro) - rd
+deltax = matmul(transpose(D2A), cro) - rd
 
 #ifdef DEBUG
 print*, "termb=[",  (deltax(i),i=1,n), "]'"
@@ -114,7 +114,7 @@ if (info .NE. 0) THEN
   return
 endif
 nrhs = 1
-call dpotrs('U', n, nrhs, T1, n, deltax, n, info) ! dpotrs
+call dpotrs('L', n, nrhs, T1, n, deltax, n, info) ! dpotrs
 if (info .NE. 0) THEN
 #ifdef DEBUG
   print*, "info2=", info

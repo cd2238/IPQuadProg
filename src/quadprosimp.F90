@@ -45,6 +45,7 @@ double precision, dimension(:), allocatable :: lambdaaff
 
 ! init
 info = 0
+iter = 0
 
 
 ! allocation
@@ -59,17 +60,14 @@ allocate(lambdaaff(m))
 
 
 ! init
-if (isx0 == 1) then
-  call initqp ( n, G, c, m, A, b, x, y, lambda, info )
-  if (info /= 0) then
-    return
-  endif
+call initqp ( n, G, c, m, A, b, isx0, x0, x, y, lambda, info )
+if (info /= 0) then
+  return
+endif
 #ifdef DEBUG
   print*, "resp cont=", matmul(A,x)-b
 #endif
-else
-  x = x0
-endif
+
 
 #ifdef DEBUG
   print*, "x0=", (x(i), i=1,n)
@@ -90,7 +88,7 @@ do while ((mu > mutol).AND.(iter < itermax))
     rd = matmul(G, x) + c - matmul(transpose(A), lambda)
 
     !rp
-    rp = matmul(A, rp) - y - b
+    rp = matmul(A, x) - y - b
 
     !rxs
     rxs = y * lambda

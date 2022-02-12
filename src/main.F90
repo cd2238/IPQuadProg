@@ -5,7 +5,7 @@
 program main
 
      implicit none
-     integer :: num_args, allocock, i
+     integer :: num_args, allocock, i, isx0
      character(len=12), dimension(:), allocatable   :: args
      integer                                        :: nb_control_variables
      double precision, dimension(:,:), allocatable  :: quadratic_objective
@@ -15,6 +15,7 @@ program main
      double precision, dimension(:), allocatable    :: constraint_vector
      integer                                        :: itermax
      double precision                               :: mutol
+     double precision, dimension(:), allocatable    :: x0
 
 
      double precision, dimension(:), allocatable    :: x    
@@ -79,10 +80,14 @@ program main
      allocate (s(nb_control_variables), stat = allocock)
      if (allocock /= 0) return    
      
+     allocate(x0(nb_control_variables))
+     isx0 = 0
+     x0 = 0.0d0
  
      ! perform optimization
      call quadprosimp ( nb_control_variables, quadratic_objective, linear_objective, &
                        nb_inequality_constraint, constraint_matrix, constraint_vector, &
+                       isx0, x0, &
                        itermax, mutol, &
                        x, lambda, s, iter, info )
 

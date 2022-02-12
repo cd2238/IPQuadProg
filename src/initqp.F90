@@ -1,6 +1,6 @@
 ! A is supposed to be row full rank (implies m<=n)
 !-----------------------------------------------------------------------
-subroutine initqp ( n, G, c, m, A, b, x, y, lambda, info )
+subroutine initqp ( n, G, c, m, A, b, isx0, x0,  x, y, lambda, info )
 !-----------------------------------------------------------------------
 implicit none
 ! inputs
@@ -10,7 +10,8 @@ double precision, dimension(n),   intent(in)  :: c
 integer,                          intent(in)  :: m
 double precision, dimension(m,n), intent(in)  :: A
 double precision, dimension(m),   intent(in)  :: b
-
+integer,                          intent(in)  :: isx0
+double precision, dimension(n),   intent(in)  :: x0
 
 ! outputs
 double precision, dimension(n),   intent(out) :: x
@@ -41,7 +42,11 @@ allocate(deltalambda(m))
 
 !init
 info = 0
-x      = 1.0d0/dble(n)
+if (isx0 == 0) then
+  x = 1.0d0/dble(n)
+else
+  x = x0
+endif
 y      = 1.0d0
 lambda = 1.0d0
 
