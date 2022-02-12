@@ -1,6 +1,6 @@
 
 !-----------------------------------------------------------------------*/
-subroutine quadprosimp(n, G, c, m, A, b, isx0, x0, itermax, mutol, x, y, lambda, iter, info)
+subroutine quadprosimp(n, G, c, m, A, b, isx0, x0, itermax, mutol, x, y, lambda, fobj, iter, info)
 
 implicit none
 ! inputs
@@ -20,6 +20,8 @@ double precision,                 intent(in)  :: mutol
 double precision, dimension(n),   intent(out) :: x
 double precision, dimension(m),   intent(out) :: y
 double precision, dimension(m),   intent(out) :: lambda
+double precision,                 intent(out) :: fobj
+
 integer,                          intent(out) :: iter
 integer,                          intent(out) :: info
 
@@ -28,6 +30,9 @@ integer,                          intent(out) :: info
 double precision alpha_aff, alpha_aff1, alpha_aff2, alpha, alpha1, alpha2, sigma
 double precision ps, mu_aff, tau, mu
 integer i
+#ifdef DEBUG
+integer j
+#endif
 
 EXTERNAL initqp, solvesysqp, calcalpha
 
@@ -46,6 +51,13 @@ double precision, dimension(:), allocatable :: lambdaaff
 ! init
 info = 0
 iter = 0
+
+#ifdef DEBUG
+print*, "G=[[", ((G(i,j),j=1,n),char(10), i=1,n), "]]"
+print*, "c=[", (c(i),i=1,n), "]"
+print*, "A=[[", ((A(i,j),j=1,n),char(10), i=1,m), "]]"
+print*, "b=[", (b(i),i=1,m), "]"
+#endif
 
 
 ! allocation
@@ -161,7 +173,7 @@ do while ((mu > mutol).AND.(iter < itermax))
     x = x + alpha*deltax
     lambda = lambda + alpha*deltalambda
     y  = y + alpha*deltay
-
+    fobj = dot_product(c,x) + 0.5*dot_product(x, matmul(G,x))
 
 #ifdef DEBUG
     print*, "~~~~"

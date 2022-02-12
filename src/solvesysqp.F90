@@ -37,7 +37,7 @@ double precision, dimension(:),   allocatable :: rd1
 double precision, dimension(:),   allocatable :: rp1
 double precision, dimension(:),   allocatable :: rxs1
 
-parameter(prec = 1.0d-9, cho = 0)
+parameter(prec = 1.0d-9, cho = 1)
 
 ! init
 info = 0
@@ -98,7 +98,7 @@ if (cho == 0) then
   call dpotrf('L', n, T1, n, info)
 else ! cho==1
   ! modified cholesky
-  call modchol2( m, T1, T1, info )
+  call modchol2( n, T1, T1, info )
 endif
 if (info .NE. 0) then
   return

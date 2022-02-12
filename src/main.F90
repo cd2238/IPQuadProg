@@ -18,14 +18,28 @@ program main
      double precision, dimension(:), allocatable    :: x0
 
 
-     double precision, dimension(:), allocatable    :: x    
+     double precision, dimension(:), allocatable    :: x
+     double precision, dimension(:), allocatable    :: xref
+
      double precision, dimension(:), allocatable    :: lambda   
      double precision, dimension(:), allocatable    :: y
+     double precision                               :: fobj
+     double precision                               :: fref
+
      integer                                        :: iter
      integer                                        :: info
 
+     integer                                        :: iosxref
+     integer                                        :: iosfref
+
+
      ! parameters
      parameter(itermax = 1000, mutol=1.0d-10)
+
+     ! init
+     iosfref = 0
+     iosxref = 0
+
      ! read data
      num_args = command_argument_count()
      allocate(args(num_args))  ! 
@@ -53,8 +67,10 @@ program main
      allocate (constraint_matrix(nb_inequality_constraint, nb_control_variables), stat = allocock)
      if (allocock /= 0) return    
      allocate (constraint_vector(nb_inequality_constraint), stat = allocock)
-     if (allocock /= 0) return   
-     
+     if (allocock /= 0) return
+     allocate (xref(nb_control_variables), stat = allocock)
+     if (allocock /= 0) return
+
      open(12, file="../data/"//trim(args(1))//"/quadratic_objective.txt")
      read(12,*) quadratic_objective
      !print*, linear_objective
@@ -70,6 +86,12 @@ program main
      read(12,*) constraint_vector
      !print*, constraint_vector
      close(12) 
+     open(12, file="../data/"//trim(args(1))//"/xref.txt")
+     read(12,*, iostat= iosxref) xref
+     close(12)
+     open(12, file="../data/"//trim(args(1))//"/fref.txt")
+     read(12,*, iostat= iosfref) fref
+     close(12)
 
      ! outputs
      allocate (x(nb_control_variables), stat = allocock)
@@ -77,7 +99,9 @@ program main
      allocate (lambda(nb_inequality_constraint), stat = allocock)
      if (allocock /= 0) return 
      allocate (y(nb_inequality_constraint), stat = allocock)
-     if (allocock /= 0) return    
+     if (allocock /= 0) return
+
+
      
      allocate(x0(nb_control_variables))
      isx0 = 0
@@ -88,7 +112,7 @@ program main
                        nb_inequality_constraint, constraint_matrix, constraint_vector, &
                        isx0, x0, &
                        itermax, mutol, &
-                       x, y, lambda, iter, info )
+                       x, y, lambda, fobj, iter, info )
 
      
 #ifdef DEBUG
@@ -97,11 +121,16 @@ program main
      print*, (lambda(i), i=1, nb_inequality_constraint)     
      print*, (y(i), i=1, nb_inequality_constraint)
 #endif
-
      print*, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
      print*, "Results :"
-     print*, "x =", (x(i), i=1,nb_control_variables)
-     print*, "obj =", dot_product(linear_objective,x)
+     print*, "xobj =", (x(i), i=1,nb_control_variables)
+     if (iosxref == 0) then
+       print*, "xref =", (xref(i), i=1,nb_control_variables)
+     endif
+     print*, "fobj =", fobj
+     if (iosfref == 0) then
+       print*, "fref =", fref
+     endif
      print*, "constraints violated ? (violation if > 0)"
      do i = 1, nb_inequality_constraint
         print*, "const ", i, ":", constraint_vector(i) - dot_product(constraint_matrix(i,:), x)
