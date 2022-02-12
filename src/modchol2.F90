@@ -16,7 +16,10 @@ double precision, dimension(n,n), intent(out) :: L
 integer                         , intent(out) :: info
 
 ! local variables
-integer allowpermut, i,j
+integer allowpermut, i
+#ifdef DEBUG
+integer j
+#endif
 double precision delta
 double precision, dimension(:),     allocatable :: d
 double precision, dimension(:),     allocatable :: e

@@ -20,7 +20,9 @@ double precision, dimension(m),   intent(out) :: lambda
 integer,                          intent(out) :: info
 
 ! local variable
+#ifdef DEBUG
 integer i
+#endif
 external solvesysqp
 
 ! allocatable
@@ -60,7 +62,7 @@ rp = matmul(A, x) - y - b
 !rxs
 rxs = - y * lambda
 
-call solvesysqp ( m, n, A, G, x, y, lambda, rd, rp, rxs, &
+call solvesysqp ( m, n, A, G, y, lambda, rd, rp, rxs, &
                         deltax, deltay, deltalambda, info )
 
 if (info .NE. 0) then

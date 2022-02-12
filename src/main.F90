@@ -138,8 +138,8 @@ program main
      print*, "iter/itermax :", iter, "/", itermax
      print*, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
-
      deallocate(x)
+     deallocate(xref)
      deallocate(y)
      deallocate(x0)
      deallocate(quadratic_objective)

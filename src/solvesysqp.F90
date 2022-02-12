@@ -1,6 +1,6 @@
 !
 !-----------------------------------------------------------------------
-subroutine solvesysqp ( m, n, A, G, x, y, lambda, rd, rp, rxs, deltax, deltay, deltalambda, info )
+subroutine solvesysqp ( m, n, A, G, y, lambda, rd, rp, rxs, deltax, deltay, deltalambda, info )
 !-----------------------------------------------------------------------
 implicit none
 ! inputs
@@ -8,7 +8,6 @@ integer,                          intent(in)  :: m
 integer,                          intent(in)  :: n
 double precision, dimension(m,n), intent(in)  :: A
 double precision, dimension(n,n), intent(in)  :: G
-double precision, dimension(n),   intent(in)  :: x
 double precision, dimension(m),   intent(in)  :: y
 double precision, dimension(m),   intent(in)  :: lambda
 double precision, dimension(n),   intent(in)  :: rd
@@ -22,9 +21,12 @@ double precision, dimension(m),   intent(out) :: deltalambda
 integer,                          intent(out) :: info
 
 ! local variables
-integer i, j, nrhs, mn
+integer i, nrhs, mn
 double precision prec, cho
 external dpotrs
+#ifdef DEBUG
+integer j
+#endif
 
 ! allocatable variables
 double precision, dimension(:),   allocatable :: Adeltax
@@ -61,7 +63,6 @@ print*, "A=[[", ((A(i,j),j=1,n),char(10), i=1,m), "]]"
 print*, "G=[[", ((G(i,j),j=1,n),char(10), i=1,n), "]]"
 print*, "lambda=[", (lambda(i),i=1,m), "]"
 print*, "y=[", (y(i),i=1,m), "]"
-print*, "x=[", (x(i),i=1,n), "]"
 print*, "rd=[", (rd(i),i=1,n), "]'"
 print*, "rp=[", (rp(i),i=1,m), "]'"
 print*, "rxs=[", (rxs(i),i=1,m), "]'"

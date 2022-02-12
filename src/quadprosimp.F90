@@ -106,7 +106,7 @@ do while ((mu > mutol).AND.(iter < itermax))
     rxs = y * lambda
 
     ! affine scaling step
-    call solvesysqp ( m, n, A, G, x, y, lambda, rd, rp, rxs, &
+    call solvesysqp ( m, n, A, G, y, lambda, rd, rp, rxs, &
                          deltax, deltay, deltalambda, info )
     if (info /= 0) then
       return
@@ -152,7 +152,7 @@ do while ((mu > mutol).AND.(iter < itermax))
 
     ! corrector/centering step
     rxs = rxs + deltalambda*deltay - sigma*mu
-    call solvesysqp ( m, n, A, G, x, y, lambda, rd, rp, rxs, deltax, deltay, deltalambda, info )
+    call solvesysqp ( m, n, A, G, y, lambda, rd, rp, rxs, deltax, deltay, deltalambda, info )
     if (info /= 0) then
       return
     endif
