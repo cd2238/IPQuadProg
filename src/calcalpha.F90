@@ -1,6 +1,14 @@
+!> Calculates the alpha parameter, the length step
+!> from Nocedal Wright
+!>
+!> @param m the size of lambda
+!> @param lambda the current dual variable
+!> @param deltalambda the current solution of the linear system
+!> @param tau back off from maximum step
+!> @param alpha the length step
+!> @param info information code
 ! -----------------------------------------------------------------------*/
 subroutine calcalpha(m, lambda, deltalambda, tau, alpha, info)
-!-------------------------------------------------------------------------
 implicit none
 integer,                        intent(in)  :: m
 double precision, dimension(m), intent(in)  :: lambda

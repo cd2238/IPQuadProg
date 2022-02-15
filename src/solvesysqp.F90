@@ -1,7 +1,20 @@
-!
+!> resolution of the Linear system of the quadratic programming
+!> from Nocedal Wright
+!> @param m the number of linear constraints
+!> @param n the number of control variables
+!> @param A the matrix constraint (m,n)
+!> @param G the matrix objective (n,n)
+!> @param y the  slack variables (m)
+!> @param lambda the dual current value (m)
+!> @param rd a right term part of the system (n)
+!> @param rp a right term part of the system (m)
+!> @param rxs a right term part of the system (m)
+!> @param deltax primal solution of the system (n)
+!> @param deltay slack solution of the system (m)
+!> @param deltalambda dual solution of the system (m)
+!> @param info information code
 !-----------------------------------------------------------------------
 subroutine solvesysqp ( m, n, A, G, y, lambda, rd, rp, rxs, deltax, deltay, deltalambda, info )
-!-----------------------------------------------------------------------
 implicit none
 ! inputs
 integer,                          intent(in)  :: m

@@ -1,5 +1,5 @@
 !> Main program in order to execute the quadratic program (quadprosimp)
-!> Example of the command line : quadpro n10c04
+!> Example of the command line : ./quadpro n10c04
 !> the maximal number of iterations itermax, and the duality measure tolerance mutol has to be modified in the code below.
 !-----------------------------------------------------------------------
 program main

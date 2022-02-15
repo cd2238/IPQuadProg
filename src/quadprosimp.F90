@@ -1,5 +1,22 @@
-
-!-----------------------------------------------------------------------*/
+!> Quadratic programming
+!> from Nocedal Wright
+!> @param n the number of control variables
+!> @param G the matrix objective (n,n)
+!> @param c the vector objective (n)
+!> @param m the number of linear constraints
+!> @param A the matrix constraint (m,n)
+!> @param b the vector constraint (m)
+!> @param isx0 1 if an primal initial value is provided, 0 if not.
+!> @param x0 the primal initial value (n)
+!> @param itermax maximal number of iterations
+!> @param mutol value of mu (duality parameter) stopping criterion.
+!> @param x the primal solution (n)
+!> @param y the slack solution (m)
+!> @param lambda the dual solution (m)
+!> @param fobj the objective solution
+!> @param iter the number of iterations realized
+!> @param info information code
+!-----------------------------------------------------------------------
 subroutine quadprosimp(n, G, c, m, A, b, isx0, x0, itermax, mutol, x, y, lambda, fobj, iter, info)
 
 implicit none

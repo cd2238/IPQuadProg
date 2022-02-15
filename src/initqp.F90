@@ -1,4 +1,16 @@
-! A is supposed to be row full rank (implies m<=n)
+! A subroutine which provides initial values for the quadratic programmig (see Nocedal Wright)
+!> @param n the number of control variables
+!> @param G the matrix objective (n,n)
+!> @param c the vector objective (n)
+!> @param m the number of linear constraints
+!> @param A the matrix constraint (m,n)
+!> @param b the vector constraint (m)
+!> @param isx0 1 if an primal initial value is provided, 0 if not.
+!> @param x0 the primal initial value (n)
+!> @param x the primal solution (n)
+!> @param y the slack solution (m)
+!> @param lambda the dual solution (m)
+!> @param info information code
 !-----------------------------------------------------------------------
 subroutine initqp ( n, G, c, m, A, b, isx0, x0,  x, y, lambda, info )
 !-----------------------------------------------------------------------
